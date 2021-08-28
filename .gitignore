@@ -1,0 +1,8 @@
+lib/*
+backup/*
+*/lib/*
+*/backup/*
+*.ico
+*.res
+*.lps
+trackbias.pas

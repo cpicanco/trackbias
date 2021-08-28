@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<CONFIG>
+  <Package Version="5">
+    <Name Value="TrackBias"/>
+    <Type Value="RunAndDesignTime"/>
+    <Author Value="cpicanco"/>
+    <CompilerOptions>
+      <Version Value="11"/>
+      <SearchPaths>
+        <UnitOutputDirectory Value="lib/$(TargetCPU)-$(TargetOS)"/>
+      </SearchPaths>
+    </CompilerOptions>
+    <Description Value="Track Bias was designed to get deltas from multiple positions (Spots) in a track bar. It inherits directly from TCustomControl, it is self contained and it depends on LCL and FCL."/>
+    <License Value="GPL3"/>
+    <Version Major="1"/>
+    <Files>
+      <Item>
+        <Filename Value="controls.bias.pas"/>
+        <UnitName Value="Controls.Bias"/>
+      </Item>
+      <Item>
+        <Filename Value="controls.bias.component.pas"/>
+        <HasRegisterProc Value="True"/>
+        <UnitName Value="Controls.Bias.Component"/>
+      </Item>
+    </Files>
+    <RequiredPkgs>
+      <Item>
+        <PackageName Value="LCL"/>
+      </Item>
+      <Item>
+        <PackageName Value="FCL"/>
+      </Item>
+    </RequiredPkgs>
+    <UsageOptions>
+      <UnitPath Value="$(PkgOutDir)"/>
+    </UsageOptions>
+    <PublishOptions>
+      <Version Value="2"/>
+      <UseFileFilters Value="True"/>
+    </PublishOptions>
+  </Package>
+</CONFIG>
