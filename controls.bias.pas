@@ -1,3 +1,12 @@
+{
+  Trackbias
+  Copyright (C) 2021 Carlos Rafael Fernandes Picanço.
+
+  The present file is distributed under the terms of the GNU General Public License (GPL v3.0).
+
+  You should have received a copy of the GNU General Public License
+  along with this program. If not, see <http://www.gnu.org/licenses/>.
+}
 unit Controls.Bias;
 
 {$mode ObjFPC}{$H+}
@@ -13,7 +22,7 @@ type
     TopCaption   : string;
     BottomCaption   : string;
     Dragging   : Boolean;
-    Value      : Byte;
+    Position      : Byte;
     BoundsRect : TRect;
     TopRect    : TRect;
     BottomRect : TRect;
@@ -31,10 +40,12 @@ type
     function GetCount : integer;
     function GetDelta(AIndex: integer) : Byte;
     function GetDeltas : TBytes;
+    function GetPosition : TBytes;
     function IsOverSpot(ASpot : TSpot; X, Y : integer) : Boolean;
     function PorcentageToClient(AValue : Byte) : integer;
     procedure SetCount(AValue : integer);
     procedure UpdateSpots(AIndex : integer); overload;
+    procedure UpdateSpots(AOverride : Boolean = True); overload;
   protected
     procedure ChangeBounds(ALeft, ATop, AWidth, AHeight : integer; KeepBase : boolean);
       override;
@@ -51,8 +62,9 @@ type
     procedure AddSpot;
     procedure RemoveSpot;
     property Count : integer read GetCount write SetCount;
+    property Deltas : TBytes read GetDeltas;
     property NextSpotCaption : string read FNextSpotCaption write FNextSpotCaption;
-    procedure UpdateSpots(AOverride : Boolean = True); overload;
+    property Positions : TBytes read GetPosition;
   end;
 
 
@@ -78,9 +90,9 @@ begin
     LValues := Round(100/Count);
     for i := Low(FSpots) to High(FSpots) do begin
       if i = High(FSpots) then begin
-        FSpots[i].Value := 100;
+        FSpots[i].Position := 100;
       end else begin
-        FSpots[i].Value := LValues*(i+1);
+        FSpots[i].Position := LValues*(i+1);
       end;
     end;
   end;
@@ -100,9 +112,9 @@ begin
   with FSpots[AIndex] do begin
     BoundsRect :=
       Rect(
-        InnerBorderH + PorcentageToClient(Value),
+        InnerBorderH + PorcentageToClient(Position),
         InnerBorderV,
-        InnerBorderH + PorcentageToClient(Value) + SpotSize,
+        InnerBorderH + PorcentageToClient(Position) + SpotSize,
         InnerBorderV + SpotSize);
 
     //BottomRect := Rect(
@@ -112,7 +124,7 @@ begin
     //  BoundsRect.Bottom+SpotSize);
 
     if AIndex = Low(FSpots) then begin
-      TopCaption := Value.ToString;
+      TopCaption := Position.ToString;
       TopRect := Rect(
         InnerBorderH + HalfSpotSize,
         InnerBorderV - TopRectHeight - 3,
@@ -219,14 +231,14 @@ begin
         LValue := ClientToPorcentage(X);
         if LLength > 1 then begin
           if (i < High(FSpots)) then begin
-            if LValue >= FSpots[i+1].Value then Exit;
+            if LValue >= FSpots[i+1].Position then Exit;
           end;
 
           if (i > Low(FSpots)) then begin
-            if LValue <= FSpots[i-1].Value then Exit
+            if LValue <= FSpots[i-1].Position then Exit
           end;
         end;
-        FSpots[i].Value := LValue;
+        FSpots[i].Position := LValue;
         UpdateSpots(i);
         if i < High(FSpots) then begin
           UpdateSpots(i+1);
@@ -340,7 +352,7 @@ begin
     S.Values[Self.Name+'.Count'] := IntToStr(Count);
     for i := Low(FSpots) to High(FSpots) do begin
       with FSpots[i] do begin
-        S.Values[Self.Name+'.Value'+i.ToString] := IntToStr(Value);
+        S.Values[Self.Name+'.Position'+i.ToString] := IntToStr(Position);
         S.Values[Self.Name+'.Caption'+i.ToString] := BottomCaption;
       end;
     end;
@@ -366,7 +378,7 @@ begin
         Count := i;
         for i := Low(FSpots) to High(FSpots) do begin
           with FSpots[i] do begin
-            Value := StrToInt(S.Values[Self.Name+'.Value'+i.ToString]);
+            Position := StrToInt(S.Values[Self.Name+'.Position'+i.ToString]);
             BottomCaption := S.Values[Self.Name+'.Caption'+i.ToString];
           end;
         end;
@@ -409,20 +421,33 @@ end;
 
 function TTrackBias.GetDelta(AIndex : integer) : Byte;
 begin
-  Result := FSpots[AIndex].Value;
+  Result := FSpots[AIndex].Position;
   if AIndex = 0 then Exit;
-  Result := Result - FSpots[AIndex-1].Value;
+  Result := Result - FSpots[AIndex-1].Position;
 end;
 
 function TTrackBias.GetDeltas : TBytes;
 var
   i : Integer;
 begin
-  Result := TBytes.Create(0);
+  Result := nil;
   SetLength(Result, Count);
   if Count > 0 then begin
     for i := Low(FSpots) to High(FSpots) do begin
       Result[i] := GetDelta(i);
+    end;
+  end else begin
+    { do nothing }
+  end;
+end;
+
+function TTrackBias.GetPosition : TBytes;
+begin
+  Result := nil;
+  SetLength(Result, Count);
+  if Count > 0 then begin
+    for i := Low(FSpots) to High(FSpots) do begin
+      Result[i] := FSpots[i].Position;
     end;
   end else begin
     { do nothing }
