@@ -2,7 +2,7 @@
 
 Track Bias is a track bar with multiple positions (ranging from 0 to 100). Each position+delta is called a "spot".
 
-![TTrackBias](https://github.com/cpicanco/trackbias/blob/master/docs/trackbias-face.png)
+![TTrackBias](https://raw.githubusercontent.com/cpicanco/trackbias/main/docs/trackbias-face.png)
 
 One can set and get deltas from multiple positions easily.   
 
