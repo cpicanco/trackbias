@@ -1,12 +1,13 @@
 # trackbias
 
-Track Bias is a track bar with multiple positions (ranging from 0 to 100). Each position+delta is called a "spot".
+Track Bias is a track bar with multiple positions (ranging from 0 to 100). 
 
 ![TTrackBias](https://raw.githubusercontent.com/cpicanco/trackbias/main/docs/trackbias-face.png)
 
 One can set and get deltas from multiple positions easily.   
+Each position+delta is called a "spot".   
 
-## Exemple
+## Example
 
 ```pascal
   uses Controls.Bias;
